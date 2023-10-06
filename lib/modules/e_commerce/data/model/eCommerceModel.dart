@@ -7,6 +7,7 @@ class EcommerceModel {
 
   factory EcommerceModel.fromJson(Map<String, dynamic> json) {
     /// agar map kelsa shunaqa boladi
+    /// if data is coming map showing this
     List<Product> list = (json['products'] as List<dynamic>).map((e) {
       return Product.fromJson(e);
     }).toList();
@@ -14,6 +15,7 @@ class EcommerceModel {
     return EcommerceModel(products: list);
 
     //// agar list kelsa json ozi yoziladi
+    /// if data is coming list writing this
   }
 }
 

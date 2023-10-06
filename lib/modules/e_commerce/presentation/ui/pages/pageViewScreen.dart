@@ -14,92 +14,94 @@ class PageViewScreen extends StatefulWidget {
 }
 
 class _PageViewScreenState extends State<PageViewScreen> {
-  int _currentIndex = 0;
-  final List _screens = const [FirstPage(), SecondPage(), ThirdPage()];
+  final List<Widget> _screens = const [FirstPage(), SecondPage(), ThirdPage()];
+  final PageController _pageController = PageController(initialPage: 0);
+
+  // Variable to track the current page
+  int _currentPage = 0;
+clear
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        children: [_screens[_currentIndex]],
-        onPageChanged: (v) {
-          v = _currentIndex;
-          setState(() {});
+        controller: _pageController,
+        children: _screens,
+        onPageChanged: (int page) {
+          setState(() {
+            _currentPage = page;
+          });
         },
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          TextButton(
-              onPressed: () {
-                if (_currentIndex > 0) {
-                  _currentIndex--;
-                }
-                setState(() {});
-              },
-              child: const Text(
-                "Prev",
-                style: TextStyle(
-                  color: Color(0xFFC4C4C4),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+          _currentPage == 0
+              ? const SizedBox.shrink()
+              : TextButton(
+                  onPressed: () {
+                    if (_currentPage > 0) {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease,
+                      );
+                    }
+                  },
+                  child: const Text(
+                    "Prev",
+                    style: TextStyle(
+                      color: Color(0xFFC4C4C4),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              )),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedContainer(
+              for (int i = 0; i < _screens.length; i++)
+                AnimatedContainer(
                   decoration: BoxDecoration(
-                      color: _currentIndex == 0
-                          ? AppColor.activeIndicatorColor
-                          : AppColor.inActiveIndicatorColor,
-                      borderRadius: BorderRadius.circular(100)),
-                  width: _currentIndex == 0 ? 30.w : 10.w,
+                    color: _currentPage == i
+                        ? AppColor.activeIndicatorColor
+                        : AppColor.inActiveIndicatorColor,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  width: _currentPage == i ? 30.w : 10.w,
                   height: 10.h,
-                  duration: const Duration(milliseconds: 10)),
+                  duration: const Duration(milliseconds: 10),
+                ),
               addWidth(5),
-              AnimatedContainer(
-                  decoration: BoxDecoration(
-                      color: _currentIndex == 1
-                          ? AppColor.activeIndicatorColor
-                          : AppColor.inActiveIndicatorColor,
-                      borderRadius: BorderRadius.circular(100)),
-                  width: _currentIndex == 1 ? 30.w : 10.w,
-                  height: 10.h,
-                  duration: const Duration(milliseconds: 10)),
-              addWidth(5),
-              AnimatedContainer(
-                  decoration: BoxDecoration(
-                      color: _currentIndex == 2
-                          ? AppColor.activeIndicatorColor
-                          : AppColor.inActiveIndicatorColor,
-                      borderRadius: BorderRadius.circular(100)),
-                  width: _currentIndex == 2 ? 30.w : 10.w,
-                  height: 10.h,
-                  duration: const Duration(milliseconds: 10)),
             ],
           ),
           TextButton(
-              onPressed: () {
-                if (_currentIndex == 2) {
-                  // If we're on the last screen, navigate to 'HomePage'
-                  Navigator.pushNamed(context, 'HomePage');
-                } else {
-                  // If not on the last screen, increment _currentIndex
-                  _currentIndex++;
-                  setState(() {});
-                }
-              },
-              child: Text(
-                _currentIndex == 2 ? "Get Started" : "Next",
-                style: const TextStyle(
-                  color: Color(0xFFF73658),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ))
+            onPressed: () {
+              if (_currentPage == _screens.length - 1) {
+                Navigator.pushNamed(context, 'HomePage');
+              } else {
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.ease,
+                );
+              }
+            },
+            child: Text(
+              _currentPage == _screens.length - 1 ? "Get Started" : "Next",
+              style: const TextStyle(
+                color: Color(0xFFF73658),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

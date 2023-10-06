@@ -10,7 +10,7 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+      children: [
         SvgPicture.asset(
           "assets/images/1.svg",
           width: 300.w,

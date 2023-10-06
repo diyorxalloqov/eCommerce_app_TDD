@@ -12,14 +12,11 @@ class EcommerceNetworkService {
     try {
       Response response = await dio.get('http://192.168.42.184:8080/products');
       if (response.statusCode == 200) {
-        print(response.data);
         return right(EcommerceModel.fromJson(response.data));
       } else {
-        print("xato");
         return left(ServerErrors(message: response.statusMessage.toString()));
       }
     } on DioException catch (e) {
-      print(e.message.toString());
       return left(ServerErrors(message: e.error.toString()));
     }
   }
